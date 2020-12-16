@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iiot.business.mapper.ArticleMapper">
+    
+    <resultMap type="Article" id="ArticleResult">
+        <result property="id"    column="id"    />
+        <result property="yhid"    column="yhid"    />
+        <result property="articleRegion"    column="article_region"    />
+        <result property="author"    column="author"    />
+        <result property="publishTime"    column="publish_time"    />
+        <result property="title"    column="title"    />
+        <result property="keywords"    column="keywords"    />
+        <result property="description"    column="description"    />
+        <result property="coverImage"    column="cover_image"    />
+        <result property="articleModel"    column="article_model"    />
+        <result property="copyFlag"    column="copy_flag"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="personalCategory"    column="personal_category"    />
+        <result property="link"    column="link"    />
+        <result property="staticUrl"    column="static_url"    />
+        <result property="tags"    column="tags"    />
+        <result property="hit"    column="hit"    />
+        <result property="replyNum"    column="reply_num"    />
+        <result property="upVote"    column="up_vote"    />
+        <result property="downVote"    column="down_vote"    />
+        <result property="hotFlag"    column="hot_flag"    />
+        <result property="newFlag"    column="new_flag"    />
+        <result property="commentFlag"    column="comment_flag"    />
+        <result property="topFlag"    column="top_flag"    />
+        <result property="favourite"    column="favourite"    />
+        <result property="missionId"    column="mission_id"    />
+        <result property="templateName"    column="template_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="available"    column="available"    />
+        <result property="deleted"    column="deleted"    />
+        <result property="extra1"    column="extra1"    />
+        <result property="extra2"    column="extra2"    />
+        <result property="extra3"    column="extra3"    />
+        <result property="content"    column="content"    />
+        <result property="content_markdown_source"    column="content_markdown_source"    />
+    </resultMap>
+
+    <sql id="selectArticleVo">
+        select id, yhid, article_region, author, publish_time, title, keywords, description, cover_image, article_model, copy_flag, category_id, personal_category, link, static_url, tags, hit, reply_num, up_vote, down_vote, hot_flag, new_flag, comment_flag, top_flag, favourite, mission_id, template_name,create_time, update_time, available, deleted, extra1, extra2, extra3 from cms_article
+    </sql>
+
+    <select id="selectArticleList" parameterType="Article" resultMap="ArticleResult">
+        <include refid="selectArticleVo"/>
+        <where>  
+            <if test="yhid != null  and yhid != ''"> and yhid = #{yhid}</if>
+            <if test="articleRegion != null  and articleRegion != ''"> and article_region = #{articleRegion}</if>
+            <if test="author != null  and author != ''"> and author = #{author}</if>
+            <if test="publishTime != null  and publishTime != ''"> and publish_time = #{publishTime}</if>
+            <if test="title != null  and title != ''"> and title like CONCAT('%',#{title},'%')</if>
+            <if test="keywords != null  and keywords != ''"> and keywords = #{keywords}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="coverImage != null  and coverImage != ''"> and cover_image = #{coverImage}</if>
+            <if test="articleModel != null  and articleModel != ''"> and article_model = #{articleModel}</if>
+            <if test="copyFlag != null "> and copy_flag = #{copyFlag}</if>
+            <if test="categoryId != null  and categoryId != ''"> and category_id = #{categoryId}</if>
+            <if test="personalCategory != null  and personalCategory != ''"> and personal_category = #{personalCategory}</if>
+            <if test="link != null  and link != ''"> and link = #{link}</if>
+            <if test="staticUrl != null  and staticUrl != ''"> and static_url = #{staticUrl}</if>
+            <if test="tag != null and tag != ''">
+                AND FIND_IN_SET(#{tag},tags)
+            </if>
+            <if test="tags != null  and tags != ''"> and tags = #{tags}</if>
+            <if test="hit != null "> and hit = #{hit}</if>
+            <if test="replyNum != null "> and reply_num = #{replyNum}</if>
+            <if test="upVote != null "> and up_vote = #{upVote}</if>
+            <if test="downVote != null "> and down_vote = #{downVote}</if>
+            <if test="hotFlag != null "> and hot_flag = #{hotFlag}</if>
+            <if test="newFlag != null "> and new_flag = #{newFlag}</if>
+            <if test="commentFlag != null "> and comment_flag = #{commentFlag}</if>
+            <if test="topFlag != null "> and top_flag = #{topFlag}</if>
+            <if test="favourite != null "> and favourite = #{favourite}</if>
+            <if test="missionId != null  and missionId != ''"> and mission_id = #{missionId}</if>
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+            <if test="available != null "> and available = #{available}</if>
+            <if test="deleted != null "> and deleted = #{deleted}</if>
+            <if test="extra1 != null  and extra1 != ''"> and extra1 = #{extra1}</if>
+            <if test="extra2 != null  and extra2 != ''"> and extra2 = #{extra2}</if>
+            <if test="extra3 != null  and extra3 != ''"> and extra3 = #{extra3}</if>
+        </where>
+          order by create_time desc
+    </select>
+
+    <select id="selectArticlesRegionNotNull" parameterType="Article" resultMap="ArticleResult">
+        <include refid="selectArticleVo"/>
+        <where>
+            1=1
+
+            <if test="author != null  and author != ''"> and author = #{author}</if>
+            <if test="title != null  and title != ''"> and title like CONCAT('%',#{title},'%')</if>
+            <if test="keywords != null  and keywords != ''"> and keywords = #{keywords}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="coverImage != null  and coverImage != ''"> and cover_image = #{coverImage}</if>
+            <if test="articleModel != null  and articleModel != ''"> and article_model = #{articleModel}</if>
+            <if test="copyFlag != null "> and copy_flag = #{copyFlag}</if>
+            <if test="categoryId != null  and categoryId != ''"> and category_id = #{categoryId}</if>
+            <if test="personalCategory != null  and personalCategory != ''"> and personal_category = #{personalCategory}</if>
+            <if test="link != null  and link != ''"> and link = #{link}</if>
+            <if test="staticUrl != null  and staticUrl != ''"> and static_url = #{staticUrl}</if>
+            <if test="tag != null and tag != ''">
+                AND FIND_IN_SET(#{tag},tags)
+            </if>
+            <if test="tags != null  and tags != ''"> and tags = #{tags}</if>
+            <if test="hit != null "> and hit = #{hit}</if>
+            <if test="replyNum != null "> and reply_num = #{replyNum}</if>
+            <if test="upVote != null "> and up_vote = #{upVote}</if>
+            <if test="downVote != null "> and down_vote = #{downVote}</if>
+            <if test="hotFlag != null "> and hot_flag = #{hotFlag}</if>
+            <if test="newFlag != null "> and new_flag = #{newFlag}</if>
+            <if test="commentFlag != null "> and comment_flag = #{commentFlag}</if>
+            <if test="topFlag != null "> and top_flag = #{topFlag}</if>
+            <if test="favourite != null "> and favourite = #{favourite}</if>
+            <if test="missionId != null  and missionId != ''"> and mission_id = #{missionId}</if>
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+            <if test="available != null "> and available = #{available}</if>
+            <if test="deleted != null "> and deleted = #{deleted}</if>
+            <if test="extra1 != null  and extra1 != ''"> and extra1 = #{extra1}</if>
+            <if test="extra2 != null  and extra2 != ''"> and extra2 = #{extra2}</if>
+            <if test="extra3 != null  and extra3 != ''"> and extra3 = #{extra3}</if>
+            and article_region is not null and article_region!=''
+        </where>
+          order by create_time desc
+    </select>
+    <select id="selectArticlesRegionIsNull" parameterType="Article" resultMap="ArticleResult">
+        <include refid="selectArticleVo"/>
+        <where>
+            1=1
+
+            <if test="author != null  and author != ''"> and author = #{author}</if>
+            <if test="title != null  and title != ''"> and title like CONCAT('%',#{title},'%')</if>
+            <if test="keywords != null  and keywords != ''"> and keywords = #{keywords}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="coverImage != null  and coverImage != ''"> and cover_image = #{coverImage}</if>
+            <if test="articleModel != null  and articleModel != ''"> and article_model = #{articleModel}</if>
+            <if test="copyFlag != null "> and copy_flag = #{copyFlag}</if>
+            <if test="categoryId != null  and categoryId != ''"> and category_id = #{categoryId}</if>
+            <if test="personalCategory != null  and personalCategory != ''"> and personal_category = #{personalCategory}</if>
+            <if test="link != null  and link != ''"> and link = #{link}</if>
+            <if test="staticUrl != null  and staticUrl != ''"> and static_url = #{staticUrl}</if>
+            <if test="tag != null and tag != ''">
+                AND FIND_IN_SET(#{tag},tags)
+            </if>
+            <if test="tags != null  and tags != ''"> and tags = #{tags}</if>
+            <if test="hit != null "> and hit = #{hit}</if>
+            <if test="replyNum != null "> and reply_num = #{replyNum}</if>
+            <if test="upVote != null "> and up_vote = #{upVote}</if>
+            <if test="downVote != null "> and down_vote = #{downVote}</if>
+            <if test="hotFlag != null "> and hot_flag = #{hotFlag}</if>
+            <if test="newFlag != null "> and new_flag = #{newFlag}</if>
+            <if test="commentFlag != null "> and comment_flag = #{commentFlag}</if>
+            <if test="topFlag != null "> and top_flag = #{topFlag}</if>
+            <if test="favourite != null "> and favourite = #{favourite}</if>
+            <if test="missionId != null  and missionId != ''"> and mission_id = #{missionId}</if>
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+            <if test="available != null "> and available = #{available}</if>
+            <if test="deleted != null "> and deleted = #{deleted}</if>
+            <if test="extra1 != null  and extra1 != ''"> and extra1 = #{extra1}</if>
+            <if test="extra2 != null  and extra2 != ''"> and extra2 = #{extra2}</if>
+            <if test="extra3 != null  and extra3 != ''"> and extra3 = #{extra3}</if>
+            and (article_region is null or article_region =='')
+        </where>
+            order by create_time desc
+    </select>
+    <select id="selectArticleById" parameterType="String" resultMap="ArticleResult">
+        <include refid="selectArticleVo"/>
+        where id = #{id}
+    </select>
+    <select id="getArticleContent" resultType="java.util.Map"  parameterType="java.lang.String">
+        SELECT content,content_markdown_source FROM cms_article_content
+        <where>
+            id=#{article_id}
+        </where>
+    </select>
+    <insert id="insertArticle" parameterType="Article">
+        insert into cms_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="yhid != null  and yhid != ''">yhid,</if>
+            <if test="articleRegion != null  and articleRegion != ''">article_region,</if>
+            <if test="author != null  and author != ''">author,</if>
+            <if test="publishTime != null  and publishTime != ''">publish_time,</if>
+            <if test="title != null  and title != ''">title,</if>
+            <if test="keywords != null  and keywords != ''">keywords,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="coverImage != null  and coverImage != ''">cover_image,</if>
+            <if test="articleModel != null  and articleModel != ''">article_model,</if>
+            <if test="copyFlag != null ">copy_flag,</if>
+            <if test="categoryId != null  and categoryId != ''">category_id,</if>
+            <if test="personalCategory != null  and personalCategory != ''">personal_category,</if>
+            <if test="link != null  and link != ''">link,</if>
+            <if test="staticUrl != null  and staticUrl != ''">static_url,</if>
+            <if test="tags != null  and tags != ''">tags,</if>
+            <if test="hit != null ">hit,</if>
+            <if test="replyNum != null ">reply_num,</if>
+            <if test="upVote != null ">up_vote,</if>
+            <if test="downVote != null ">down_vote,</if>
+            <if test="hotFlag != null ">hot_flag,</if>
+            <if test="newFlag != null ">new_flag,</if>
+            <if test="commentFlag != null ">comment_flag,</if>
+            <if test="topFlag != null ">top_flag,</if>
+            <if test="favourite != null ">favourite,</if>
+            <if test="missionId != null  and missionId != ''">mission_id,</if>
+            <if test="templateName != null  and templateName != ''">template_name,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="available != null ">available,</if>
+            <if test="deleted != null ">deleted,</if>
+            <if test="extra1 != null  and extra1 != ''">extra1,</if>
+            <if test="extra2 != null  and extra2 != ''">extra2,</if>
+            <if test="extra3 != null  and extra3 != ''">extra3,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="yhid != null  and yhid != ''">#{yhid},</if>
+            <if test="articleRegion != null  and articleRegion != ''">#{articleRegion},</if>
+            <if test="author != null  and author != ''">#{author},</if>
+            <if test="publishTime != null  and publishTime != ''">#{publishTime},</if>
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="keywords != null  and keywords != ''">#{keywords},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="coverImage != null  and coverImage != ''">#{coverImage},</if>
+            <if test="articleModel != null  and articleModel != ''">#{articleModel},</if>
+            <if test="copyFlag != null ">#{copyFlag},</if>
+            <if test="categoryId != null  and categoryId != ''">#{categoryId},</if>
+            <if test="personalCategory != null  and personalCategory != ''">#{personalCategory},</if>
+            <if test="link != null  and link != ''">#{link},</if>
+            <if test="staticUrl != null  and staticUrl != ''">#{staticUrl},</if>
+            <if test="tags != null  and tags != ''">#{tags},</if>
+            <if test="hit != null ">#{hit},</if>
+            <if test="replyNum != null ">#{replyNum},</if>
+            <if test="upVote != null ">#{upVote},</if>
+            <if test="downVote != null ">#{downVote},</if>
+            <if test="hotFlag != null ">#{hotFlag},</if>
+            <if test="newFlag != null ">#{newFlag},</if>
+            <if test="commentFlag != null ">#{commentFlag},</if>
+            <if test="topFlag != null ">#{topFlag},</if>
+            <if test="favourite != null ">#{favourite},</if>
+            <if test="missionId != null  and missionId != ''">#{missionId},</if>
+            <if test="templateName != null  and templateName != ''">#{templateName},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="available != null ">#{available},</if>
+            <if test="deleted != null ">#{deleted},</if>
+            <if test="extra1 != null  and extra1 != ''">#{extra1},</if>
+            <if test="extra2 != null  and extra2 != ''">#{extra2},</if>
+            <if test="extra3 != null  and extra3 != ''">#{extra3},</if>
+         </trim>
+    </insert>
+    <insert id="insertArticleContent"  parameterType="Article">
+		insert into cms_article_content(id,content,content_markdown_source)
+		values (#{id},#{content},#{content_markdown_source})
+	</insert>
+    <update id="updateArticle" parameterType="Article">
+        update cms_article
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="yhid != null  and yhid != ''">yhid = #{yhid},</if>
+            <if test="articleRegion != null  and articleRegion != ''">article_region = #{articleRegion},</if>
+            <if test="author != null  and author != ''">author = #{author},</if>
+            <if test="publishTime != null  and publishTime != ''">publish_time = #{publishTime},</if>
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="keywords != null  and keywords != ''">keywords = #{keywords},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="coverImage != null  and coverImage != ''">cover_image = #{coverImage},</if>
+            <if test="articleModel != null  and articleModel != ''">article_model = #{articleModel},</if>
+            <if test="copyFlag != null ">copy_flag = #{copyFlag},</if>
+            <if test="categoryId != null  and categoryId != ''">category_id = #{categoryId},</if>
+            <if test="personalCategory != null  and personalCategory != ''">personal_category = #{personalCategory},</if>
+            <if test="link != null  and link != ''">link = #{link},</if>
+            <if test="staticUrl != null  and staticUrl != ''">static_url = #{staticUrl},</if>
+            <if test="tags != null  and tags != ''">tags = #{tags},</if>
+            <if test="hit != null ">hit = #{hit},</if>
+            <if test="replyNum != null ">reply_num = #{replyNum},</if>
+            <if test="upVote != null ">up_vote = #{upVote},</if>
+            <if test="downVote != null ">down_vote = #{downVote},</if>
+            <if test="hotFlag != null ">hot_flag = #{hotFlag},</if>
+            <if test="newFlag != null ">new_flag = #{newFlag},</if>
+            <if test="commentFlag != null ">comment_flag = #{commentFlag},</if>
+            <if test="topFlag != null ">top_flag = #{topFlag},</if>
+            <if test="favourite != null ">favourite = #{favourite},</if>
+            <if test="missionId != null  and missionId != ''">mission_id = #{missionId},</if>
+            <if test="templateName != null  and templateName != ''">template_name = #{templateName},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="available != null ">available = #{available},</if>
+            <if test="deleted != null ">deleted = #{deleted},</if>
+            <if test="extra1 != null  and extra1 != ''">extra1 = #{extra1},</if>
+            <if test="extra2 != null  and extra2 != ''">extra2 = #{extra2},</if>
+            <if test="extra3 != null  and extra3 != ''">extra3 = #{extra3},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateArticleContent" parameterType="Article">
+        update cms_article_content
+        <set>
+            <if test="content != null">content=#{content},</if>
+            <if test="content_markdown_source != null">content_markdown_source=#{content_markdown_source},</if>
+        </set>
+        where
+        id =#{id}
+    </update>
+    <delete id="deleteArticleById" parameterType="String">
+        delete from cms_article where id = #{id}
+    </delete>
+    <delete id="deleteArticleContentById" parameterType="String">
+        delete from cms_article_content where id = #{id}
+    </delete>
+    <delete id="deleteArticleByIds" parameterType="String">
+        delete from cms_article where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteArticleContentByIds" parameterType="String">
+        delete from cms_article_content where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="checkExistsByTitleAndLink" resultType="java.lang.Integer"  parameterType="java.lang.String">
+		SELECT count(1) FROM cms_article
+		where title=#{title} and link=#{link}
+	</select>
+
+    <update id="upVote" parameterType="java.lang.String">
+        update cms_article set up_vote=up_vote+1 where id=#{id}
+    </update>
+    <update id="articleLook" parameterType="java.lang.String">
+        update cms_article set hit=hit+1 where id=#{id}
+    </update>
+
+    <update id="batchPublish" flushCache="true">
+        update cms_article set available=1 where id in
+        <foreach collection="array" item = "ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+</mapper>

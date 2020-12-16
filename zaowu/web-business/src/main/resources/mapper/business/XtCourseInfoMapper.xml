@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iiot.business.mapper.XtCourseInfoMapper">
+    
+    <resultMap type="XtCourseInfo" id="XtCourseInfoResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="courseType"    column="course_type"    />
+    </resultMap>
+
+    <sql id="selectXtCourseInfoVo">
+        select id, content, img_url, course_type from xt_course_info
+    </sql>
+
+    <select id="selectXtCourseInfoList" parameterType="XtCourseInfo" resultMap="XtCourseInfoResult">
+        <include refid="selectXtCourseInfoVo"/>
+        <where>  
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="imgUrl != null  and imgUrl != ''"> and img_url = #{imgUrl}</if>
+            <if test="courseType != null  and courseType != ''"> and course_type = #{courseType}</if>
+        </where>
+    </select>
+    
+    <select id="selectXtCourseInfoById" parameterType="Long" resultMap="XtCourseInfoResult">
+        <include refid="selectXtCourseInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertXtCourseInfo" parameterType="XtCourseInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into xt_course_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content != null  and content != ''">content,</if>
+            <if test="imgUrl != null  and imgUrl != ''">img_url,</if>
+            <if test="courseType != null  and courseType != ''">course_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="imgUrl != null  and imgUrl != ''">#{imgUrl},</if>
+            <if test="courseType != null  and courseType != ''">#{courseType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXtCourseInfo" parameterType="XtCourseInfo">
+        update xt_course_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="imgUrl != null  and imgUrl != ''">img_url = #{imgUrl},</if>
+            <if test="courseType != null  and courseType != ''">course_type = #{courseType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXtCourseInfoById" parameterType="Long">
+        delete from xt_course_info where id = #{id}
+    </delete>
+
+    <delete id="deleteXtCourseInfoByIds" parameterType="String">
+        delete from xt_course_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iiot.business.mapper.XtRegistinfoMapper">
+    
+    <resultMap type="XtRegistinfo" id="XtRegistinfoResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="phonenumber"    column="phonenumber"    />
+        <result property="registType"    column="regist_type"    />
+        <result property="age"    column="age"    />
+        <result property="email"    column="email"    />
+        <result property="degree"    column="degree"    />
+        <result property="wechat"    column="wechat"    />
+        <result property="sex"    column="sex"    />
+        <result property="idcard"    column="idcard"    />
+        <result property="subject"  column="subject"/>
+    </resultMap>
+
+    <sql id="selectXtRegistinfoVo">
+        select id, user_id, user_name, phonenumber, regist_type, age, email, degree, wechat, sex, idcard, subject from xt_registinfo
+    </sql>
+
+    <select id="selectXtRegistinfoList" parameterType="XtRegistinfo" resultMap="XtRegistinfoResult">
+        <include refid="selectXtRegistinfoVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="phonenumber != null  and phonenumber != ''"> and phonenumber = #{phonenumber}</if>
+            <if test="registType != null  and registType != ''"> and regist_type = #{registType}</if>
+            <if test="age != null "> and age = #{age}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="degree != null  and degree != ''"> and degree = #{degree}</if>
+            <if test="wechat != null  and wechat != ''"> and wechat = #{wechat}</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="idcard != null  and idcard != ''"> and idcard = #{idcard}</if>
+            <if test="subject != null  and subject != ''"> and subject = #{subject}</if>
+        </where>
+    </select>
+    
+    <select id="selectXtRegistinfoById" parameterType="Long" resultMap="XtRegistinfoResult">
+        <include refid="selectXtRegistinfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectXtRegistinfoByName" parameterType="String" resultMap="XtRegistinfoResult">
+        <include refid="selectXtRegistinfoVo"/>
+        where user_name = #{userName}
+    </select>
+        
+    <insert id="insertXtRegistinfo" parameterType="XtRegistinfo" useGeneratedKeys="true" keyProperty="id">
+        insert into xt_registinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null  and userName != ''">user_name,</if>
+            <if test="phonenumber != null  and phonenumber != ''">phonenumber,</if>
+            <if test="registType != null  and registType != ''">regist_type,</if>
+            <if test="age != null ">age,</if>
+            <if test="email != null  and email != ''">email,</if>
+            <if test="degree != null  and degree != ''">degree,</if>
+            <if test="wechat != null  and wechat != ''">wechat,</if>
+            <if test="sex != null  and sex != ''">sex,</if>
+            <if test="idcard != null  and idcard != ''">idcard,</if>
+            <if test="subject != null and subject != ''">subject,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="phonenumber != null  and phonenumber != ''">#{phonenumber},</if>
+            <if test="registType != null  and registType != ''">#{registType},</if>
+            <if test="age != null ">#{age},</if>
+            <if test="email != null  and email != ''">#{email},</if>
+            <if test="degree != null  and degree != ''">#{degree},</if>
+            <if test="wechat != null  and wechat != ''">#{wechat},</if>
+            <if test="sex != null  and sex != ''">#{sex},</if>
+            <if test="idcard != null  and idcard != ''">#{idcard},</if>
+            <if test="subject != null  and subject != ''">#{subject},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXtRegistinfo" parameterType="XtRegistinfo">
+        update xt_registinfo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="phonenumber != null  and phonenumber != ''">phonenumber = #{phonenumber},</if>
+            <if test="registType != null  and registType != ''">regist_type = #{registType},</if>
+            <if test="age != null ">age = #{age},</if>
+            <if test="email != null  and email != ''">email = #{email},</if>
+            <if test="degree != null  and degree != ''">degree = #{degree},</if>
+            <if test="wechat != null  and wechat != ''">wechat = #{wechat},</if>
+            <if test="sex != null  and sex != ''">sex = #{sex},</if>
+            <if test="idcard != null  and idcard != ''">idcard = #{idcard},</if>
+            <if test="subject != null  and subject != ''">subject = #{subject},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXtRegistinfoById" parameterType="Long">
+        delete from xt_registinfo where id = #{id}
+    </delete>
+
+    <delete id="deleteXtRegistinfoByIds" parameterType="String">
+        delete from xt_registinfo where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

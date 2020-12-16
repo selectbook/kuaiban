@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('文章管理列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>文章标题：</p>
+                                <input type="text" name="title"/>
+                            </li>
+                            <li>
+                                文章专区：<select name="articleRegion" th:with="type=${@dict.getType('article_region')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                审核状态：<select name="available" th:with="type=${@dict.getType('sys_available_status')}">
+                                            <option value="">所有</option>
+                                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                          </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()" shiro:hasPermission="cms:article:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.editTab()" shiro:hasPermission="cms:article:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="cms:article:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a onclick="publishArticles()" class="btn btn-outline btn-danger"><i class="fa fa-upload"></i>&nbsp;批量发布</a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+
+        var articleModelDatas = [[${@dict.getType('article_model')}]];
+
+        var editFlag = [[${@permission.hasPermi('cms:article:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('cms:article:remove')}]];
+        var prefix = ctx + "cms/article";
+
+
+        var beforePreView=function(v){
+            if(isNotEmpty(v)){
+                var b=Fast.isExist(v);
+                if(b){
+                    return true;
+                }
+            }
+            Fast.msg_error("页面不存在!");
+            return false;
+        }
+        function list(){
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "文章",
+                columns: [{
+                    checkbox: true
+                },
+                    {field : 'id',title : '主键，文章ID',visible: false},
+                    {field : 'yhid',title : '作者',visible:false},
+                    {field : 'articleRegion',title : '专区',visible:false},
+                    {field : 'author',title : '原文作者',visible:false},
+                    {field : 'publishTime',title : '发布时间',visible:false},
+                    {field : 'title',title : '文章标题'},
+                    {field : 'keywords',title : '关键词',visible:false},
+                    {field : 'description',title : '摘要',visible:false},
+                    {field : 'coverImage',title : '封面图片',visible:false},
+                    {field : 'articleModel',title : '文章模型',formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(articleModelDatas, value);
+                        }},
+                    {field : 'copyFlag',title : '转载标志',visible:false},
+                    {field : 'categoryIds',title : '频道栏目ID',visible:false},
+                    {field : 'personalCategory',title : '个人分类',visible:false},
+                    {field : 'link',title : '原始链接',visible:false},
+                    {field:'staticUrl',title:'静态页面',align:'center',width:"100px",visible:false,formatter:function(v,row){
+                            if(isNotEmpty(v)){
+                                return '<a class="btn btn-success btn-xs" href="'+v+'" onclick="return beforePreView(this.href)"><i class="fa fa-eye"></i>查看</a>';
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {field:'操作',title:'动态页面',align:'center',width:"100px",formatter:function(v,row){
+                            return '<a class="btn btn-success btn-xs" href="'+prefix+'/detail/'+row.id+'" target=\'_blank\'><i class="fa fa-eye"></i>查看</a>';
+                        }
+                    },
+                    {field : 'tags',title : '标签',visible:false},
+                    {field : 'tags_name',title : '标签'},
+                    {field : 'hit',title : '点击数',align:'center',width:"80px"},
+                    /*{field : 'replyNum',title : '回复数'},
+                   {field : 'upVote',title : '点赞数'},
+                   {field : 'downVote',title : '差评数'},
+                   {field : 'hotFlag',title : '热点标志'},
+                   {field : 'newFlag',title : '新增标志'},
+                   {field : 'commentFlag',title : '是否开启评论'},
+                   {field : 'topFlag',title : '置顶标志'},
+                   {field : 'favourite',title : '收藏数'},
+                   {field : 'missionId',title : '趴取任务的ID'},
+                   {field : 'templateName',title : '生成静态页面的模板(cms_template表中的name)'},
+                  {field : 'available',title : '状态标志'},
+                   {field : 'deleted',title : '删除标志'},
+                   {field : 'extra1',title : '附加字段1'},
+                   {field : 'extra2',title : '附加字段2'},
+                   {field : 'extra3',title : '附加字段3'},*/
+                    {field:'available',title:'状态',align:'center',width:"100px",formatter:function(v){
+                            if(v==1|v=='1'){
+                                return "<font color='green'>已发布</font>";
+                            }else if(v==0||v=='0'){
+                                return "<font color='gray'>草稿</font>";
+                            }else if(v==2||v=='2'){
+                                return "<font color='red'>待审核</font>";
+                            }else{
+                                return v;
+                            }
+                        }
+                    },
+                    {title: '操作', align: 'center', formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.editTab(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                            return actions.join('');
+                        }
+                    }]
+            };
+            $.table.init(options);
+        }
+        $(function() {
+            list();
+        });
+
+
+
+        var publishArticles=function(){
+            var selecRow = $("#bootstrap-table").bootstrapTable('getSelections');
+            if(selecRow.length > 0){
+                Fast.confirm("确定批量发布文章吗？", function(){
+                    var ids = new Array();
+                    for(var i=0;i<selecRow.length;i++){
+                        ids[ids.length] = selecRow[i]["id"]
+                    }
+                    $.ajax({
+                        type:"post",
+                        url:'/cms/article/batchPublish/'+ids,
+                        data:null,
+                        success:function(data,textStatus){
+                            Fast.msg_success(data.msg);
+                            $.table.search();
+                        }
+                    });
+                });
+            }else{
+                Fast.msg_warning("请选择要发布的文章!");
+            }
+        }
+
+    </script>
+</body>
+</html>
